@@ -1,5 +1,13 @@
 import MvpLayout from "@/Pages/_MvpLayout";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { router, useForm } from "@inertiajs/react";
+import { useState } from "react";
 
 type FarmOption = {
     id: number;
@@ -20,95 +28,231 @@ type BarnsIndexProps = {
     farms: FarmOption[];
 };
 
+const typeOptions = ["Sapi", "Kambing", "Ayam", "Domba"];
+
 export default function BarnsIndex({ barns, farms }: BarnsIndexProps) {
     const createForm = useForm({ farm_id: "", name: "", type: "", capacity: "", notes: "" });
     const updateForm = useForm({ id: "", farm_id: "", name: "", type: "", capacity: "", notes: "" });
+    const [openCreate, setOpenCreate] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+
+    const openEditDialog = (barn: Barn) => {
+        updateForm.setData({
+            id: String(barn.id),
+            farm_id: String(barn.farm_id),
+            name: barn.name,
+            type: barn.type ?? "",
+            capacity: barn.capacity ? String(barn.capacity) : "",
+            notes: "",
+        });
+        setOpenEdit(true);
+    };
 
     return (
         <MvpLayout title="Barns">
             <div className="space-y-4">
-                <h2 className="text-2xl font-semibold">Barns</h2>
+                <Card>
+                    <CardHeader className="flex-row items-center justify-between space-y-0">
+                        <div>
+                            <CardTitle>Barns</CardTitle>
+                            <p className="text-sm text-muted-foreground">Shadcn select + dialog untuk data kandang.</p>
+                        </div>
+                        <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+                            <DialogTrigger asChild>
+                                <Button>Tambah Barn</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Create Barn</DialogTitle>
+                                    <DialogDescription>Masukkan data kandang baru.</DialogDescription>
+                                </DialogHeader>
+                                <form
+                                    className="space-y-3"
+                                    onSubmit={(event) => {
+                                        event.preventDefault();
+                                        createForm
+                                            .transform((data) => ({
+                                                ...data,
+                                                farm_id: Number(data.farm_id),
+                                                capacity: data.capacity ? Number(data.capacity) : null,
+                                            }))
+                                            .post("/barns", {
+                                                onSuccess: () => {
+                                                    createForm.reset();
+                                                    setOpenCreate(false);
+                                                },
+                                            });
+                                    }}
+                                >
+                                    <Select value={createForm.data.farm_id} onValueChange={(value) => createForm.setData("farm_id", value)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih farm" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {farms.map((farm) => (
+                                                <SelectItem key={farm.id} value={String(farm.id)}>
+                                                    {farm.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
 
-                <form
-                    className="grid gap-2 rounded border bg-white p-4"
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        createForm
-                            .transform((data) => ({ ...data, farm_id: Number(data.farm_id), capacity: data.capacity ? Number(data.capacity) : null }))
-                            .post("/barns", { onSuccess: () => createForm.reset() });
-                    }}
-                >
-                    <h3 className="font-medium">Create Barn</h3>
-                    <select className="rounded border p-2" value={createForm.data.farm_id} onChange={(event) => createForm.setData("farm_id", event.target.value)}>
-                        <option value="">Pilih Farm</option>
-                        {farms.map((farm) => (
-                            <option key={farm.id} value={farm.id}>
-                                {farm.name}
-                            </option>
-                        ))}
-                    </select>
-                    <input className="rounded border p-2" placeholder="Name" value={createForm.data.name} onChange={(event) => createForm.setData("name", event.target.value)} />
-                    <input className="rounded border p-2" placeholder="Type" value={createForm.data.type} onChange={(event) => createForm.setData("type", event.target.value)} />
-                    <input className="rounded border p-2" placeholder="Capacity" value={createForm.data.capacity} onChange={(event) => createForm.setData("capacity", event.target.value)} />
-                    <textarea className="rounded border p-2" placeholder="Notes" value={createForm.data.notes} onChange={(event) => createForm.setData("notes", event.target.value)} />
-                    <button className="rounded bg-emerald-600 px-4 py-2 text-white">Simpan</button>
-                </form>
+                                    <Input
+                                        placeholder="Nama kandang"
+                                        value={createForm.data.name}
+                                        onChange={(event) => createForm.setData("name", event.target.value)}
+                                    />
 
-                <form
-                    className="grid gap-2 rounded border bg-white p-4"
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        if (!updateForm.data.id) return;
-                        updateForm
-                            .transform((data) => ({ ...data, farm_id: Number(data.farm_id), capacity: data.capacity ? Number(data.capacity) : null }))
-                            .put(`/barns/${updateForm.data.id}`);
-                    }}
-                >
-                    <h3 className="font-medium">Update Barn</h3>
-                    <input className="rounded border p-2" placeholder="ID" value={updateForm.data.id} onChange={(event) => updateForm.setData("id", event.target.value)} />
-                    <select className="rounded border p-2" value={updateForm.data.farm_id} onChange={(event) => updateForm.setData("farm_id", event.target.value)}>
-                        <option value="">Pilih Farm</option>
-                        {farms.map((farm) => (
-                            <option key={farm.id} value={farm.id}>
-                                {farm.name}
-                            </option>
-                        ))}
-                    </select>
-                    <input className="rounded border p-2" placeholder="Name" value={updateForm.data.name} onChange={(event) => updateForm.setData("name", event.target.value)} />
-                    <input className="rounded border p-2" placeholder="Type" value={updateForm.data.type} onChange={(event) => updateForm.setData("type", event.target.value)} />
-                    <input className="rounded border p-2" placeholder="Capacity" value={updateForm.data.capacity} onChange={(event) => updateForm.setData("capacity", event.target.value)} />
-                    <textarea className="rounded border p-2" placeholder="Notes" value={updateForm.data.notes} onChange={(event) => updateForm.setData("notes", event.target.value)} />
-                    <button className="rounded bg-amber-600 px-4 py-2 text-white">Update</button>
-                </form>
+                                    <Select value={createForm.data.type} onValueChange={(value) => createForm.setData("type", value)}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Pilih tipe ternak" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {typeOptions.map((type) => (
+                                                <SelectItem key={type} value={type}>
+                                                    {type}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
 
-                <div className="overflow-x-auto rounded border bg-white">
-                    <table className="min-w-full text-sm">
-                        <thead className="bg-slate-100">
-                            <tr>
-                                <th className="p-2 text-left">ID</th>
-                                <th className="p-2 text-left">Farm</th>
-                                <th className="p-2 text-left">Name</th>
-                                <th className="p-2 text-left">Type</th>
-                                <th className="p-2 text-left">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {barns.map((barn) => (
-                                <tr key={barn.id} className="border-t">
-                                    <td className="p-2">{barn.id}</td>
-                                    <td className="p-2">{barn.farm?.name ?? barn.farm_id}</td>
-                                    <td className="p-2">{barn.name}</td>
-                                    <td className="p-2">{barn.type ?? "-"}</td>
-                                    <td className="p-2">
-                                        <button className="rounded bg-red-600 px-3 py-1 text-white" onClick={() => router.delete(`/barns/${barn.id}`)}>
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                    <Input
+                                        placeholder="Capacity"
+                                        value={createForm.data.capacity}
+                                        onChange={(event) => createForm.setData("capacity", event.target.value)}
+                                    />
+
+                                    <DialogFooter>
+                                        <Button type="button" variant="outline" onClick={() => setOpenCreate(false)}>
+                                            Cancel
+                                        </Button>
+                                        <Button type="submit" disabled={createForm.processing}>
+                                            Save
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        </Dialog>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>ID</TableHead>
+                                    <TableHead>Farm</TableHead>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead>Capacity</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">Action</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {barns.map((barn) => (
+                                    <TableRow key={barn.id}>
+                                        <TableCell>{barn.id}</TableCell>
+                                        <TableCell>{barn.farm?.name ?? barn.farm_id}</TableCell>
+                                        <TableCell>{barn.name}</TableCell>
+                                        <TableCell>{barn.type ?? "-"}</TableCell>
+                                        <TableCell>{barn.capacity ?? "-"}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="success">Active</Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Button size="sm" variant="outline" onClick={() => openEditDialog(barn)}>
+                                                    Edit
+                                                </Button>
+                                                <Button size="sm" variant="secondary" onClick={() => router.delete(`/barns/${barn.id}`)}>
+                                                    Delete
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                {barns.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={7} className="text-muted-foreground">
+                                            Belum ada barn.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+
+                <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Update Barn</DialogTitle>
+                            <DialogDescription>Edit data kandang terpilih.</DialogDescription>
+                        </DialogHeader>
+                        <form
+                            className="space-y-3"
+                            onSubmit={(event) => {
+                                event.preventDefault();
+                                if (!updateForm.data.id) return;
+                                updateForm
+                                    .transform((data) => ({
+                                        ...data,
+                                        farm_id: Number(data.farm_id),
+                                        capacity: data.capacity ? Number(data.capacity) : null,
+                                    }))
+                                    .put(`/barns/${updateForm.data.id}`, {
+                                        onSuccess: () => setOpenEdit(false),
+                                    });
+                            }}
+                        >
+                            <Select value={updateForm.data.farm_id} onValueChange={(value) => updateForm.setData("farm_id", value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih farm" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {farms.map((farm) => (
+                                        <SelectItem key={farm.id} value={String(farm.id)}>
+                                            {farm.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Input
+                                placeholder="Nama kandang"
+                                value={updateForm.data.name}
+                                onChange={(event) => updateForm.setData("name", event.target.value)}
+                            />
+
+                            <Select value={updateForm.data.type} onValueChange={(value) => updateForm.setData("type", value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Pilih tipe ternak" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {typeOptions.map((type) => (
+                                        <SelectItem key={type} value={type}>
+                                            {type}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Input
+                                placeholder="Capacity"
+                                value={updateForm.data.capacity}
+                                onChange={(event) => updateForm.setData("capacity", event.target.value)}
+                            />
+
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setOpenEdit(false)}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" disabled={updateForm.processing}>
+                                    Update
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </MvpLayout>
     );
