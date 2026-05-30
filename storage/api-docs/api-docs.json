@@ -1,929 +1,299 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "UMKM Website API",
-        "description": "API Documentation for UMKM Website",
+        "title": "Ternak MVP API Documentation",
+        "description": "Swagger documentation for Ternak MVP web routes and health endpoint.",
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://my-default-host.com",
-            "description": "Demo API Server"
+            "url": "http://localhost:8000",
+            "description": "Local development server"
         }
     ],
     "paths": {
-        "/api/register": {
-            "post": {
+        "/api/health": {
+            "get": {
                 "tags": [
-                    "Auth"
+                    "Public"
                 ],
-                "summary": "Register a new user",
-                "operationId": "8a56853624e025573120a09a4c75d468",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "email",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Health check",
+                "operationId": "24844818c4dfe666a62b49c2b2cdd5cc",
                 "responses": {
-                    "201": {
-                        "description": "User registered successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User successfully registered"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
+                    "200": {
+                        "description": "Service is healthy"
                     }
                 }
             }
         },
-        "/api/login": {
-            "post": {
+        "/": {
+            "get": {
                 "tags": [
-                    "Auth"
+                    "Public"
                 ],
-                "summary": "Log in a user and get an access token",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Landing page",
+                "operationId": "8867348fe6edc91ca9513fceb5cba53b",
                 "responses": {
                     "200": {
-                        "description": "Login successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login successful"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "access_token": {
-                                                    "type": "string"
-                                                },
-                                                "token_type": {
-                                                    "type": "string",
-                                                    "example": "Bearer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                        "description": "Landing page"
                     }
                 }
             }
         },
-        "/api/logout": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Log out the current user (Revoke the token)",
-                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
-                "responses": {
-                    "200": {
-                        "description": "Logout successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User successfully signed out"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/refresh": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Refresh the access token (revoke current, issue new)",
-                "operationId": "2c27d311a2876560fcb5a754b556cdc5",
-                "responses": {
-                    "200": {
-                        "description": "Token refreshed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Token refreshed successfully"
-                                        },
-                                        "data": {
-                                            "properties": {
-                                                "access_token": {
-                                                    "type": "string"
-                                                },
-                                                "token_type": {
-                                                    "type": "string",
-                                                    "example": "Bearer"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/me": {
+        "/login": {
             "get": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Get the authenticated User profile",
-                "operationId": "9d9bc556f927575aa492a88c28fe5908",
+                "summary": "Login page",
+                "operationId": "43ae57c6a54f795c47fb01df9bacef53",
                 "responses": {
                     "200": {
-                        "description": "User profile retrieved",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Login view"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Submit login",
+                "operationId": "0b5fa58b319191af57cb7afe9bf81e2b",
+                "requestBody": {
+                    "description": "Login credentials",
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after login"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register page",
+                "operationId": "de0822d5932a9bbf65c5473f757b8c96",
+                "responses": {
+                    "200": {
+                        "description": "Register view"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Submit register",
+                "operationId": "378b1d4032efbff0415c5b429edadc3b",
+                "requestBody": {
+                    "description": "Register payload",
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after register"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "operationId": "f3ae2f9bee09085846cc13ec0ce676af",
+                "responses": {
+                    "302": {
+                        "description": "Redirect to login"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             }
         },
-        "/api/businesses": {
+        "/dashboard": {
             "get": {
                 "tags": [
-                    "Business"
+                    "Dashboard"
                 ],
-                "summary": "Get all businesses owned by the authenticated user",
-                "operationId": "7123a3e6abeab779b8460888ff15e0fb",
-                "parameters": [
-                    {
-                        "name": "category",
-                        "in": "query",
-                        "description": "Filter by category",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "F&B"
-                        }
-                    },
-                    {
-                        "name": "city",
-                        "in": "query",
-                        "description": "Filter by city",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "Malang"
-                        }
-                    },
-                    {
-                        "name": "is_active",
-                        "in": "query",
-                        "description": "Filter by active status",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "example": true
-                        }
-                    }
-                ],
+                "summary": "Dashboard page",
+                "operationId": "fc7935c533cbdf416b8ec11d22ed6059",
                 "responses": {
                     "200": {
-                        "description": "List of businesses",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Success"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "user_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "Kedai Es Teh Manis"
-                                                    },
-                                                    "category": {
-                                                        "type": "string",
-                                                        "example": "F&B"
-                                                    },
-                                                    "city": {
-                                                        "type": "string",
-                                                        "example": "Malang"
-                                                    },
-                                                    "address": {
-                                                        "type": "string",
-                                                        "example": "Jl. Soekarno Hatta No. 12"
-                                                    },
-                                                    "latitude": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": -7.9666
-                                                    },
-                                                    "longitude": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 112.6326
-                                                    },
-                                                    "is_active": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
+                        "description": "Dashboard view"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/farms": {
+            "get": {
+                "tags": [
+                    "Farms"
+                ],
+                "summary": "List farms",
+                "operationId": "296e350b48ac49127d5d9ba22af8512e",
+                "responses": {
+                    "200": {
+                        "description": "Farms page"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
                     }
                 ]
             },
             "post": {
                 "tags": [
-                    "Business"
+                    "Farms"
                 ],
-                "summary": "Create a new business",
-                "operationId": "4533b15ef840def2c9ceb555a2bd66d2",
+                "summary": "Create farm",
+                "operationId": "86795f8899f8c483a93df00ba7fc86e9",
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "city"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Kedai Es Teh Manis",
-                                        "maxLength": 200
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "F&B",
-                                        "maxLength": 100
-                                    },
-                                    "city": {
-                                        "type": "string",
-                                        "example": "Malang",
-                                        "maxLength": 100
-                                    },
-                                    "address": {
-                                        "type": "string",
-                                        "example": "Jl. Soekarno Hatta No. 12"
-                                    },
-                                    "latitude": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": -7.9666
-                                    },
-                                    "longitude": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 112.6326
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "required": true
                 },
                 "responses": {
-                    "201": {
-                        "description": "Business created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Business created successfully"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "302": {
+                        "description": "Redirect after create"
                     },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
+                    "422": {
+                        "description": "Validation failed"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             }
         },
-        "/api/businesses/{id}": {
-            "get": {
-                "tags": [
-                    "Business"
-                ],
-                "summary": "Get a specific business by ID",
-                "operationId": "fa4803adef18582b4d9e6728b83d6ca2",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Business detail",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
+        "/farms/{farm}": {
             "put": {
                 "tags": [
-                    "Business"
+                    "Farms"
                 ],
-                "summary": "Update a specific business",
-                "operationId": "d7697dd0261e3a4a072e3ba3cab52fbd",
+                "summary": "Update farm",
+                "operationId": "f14c5665b40c844b26f3866d4e62494d",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "farm",
                         "in": "path",
-                        "description": "Business ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Kedai Es Teh Manis Updated",
-                                        "maxLength": 200
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "F&B",
-                                        "maxLength": 100
-                                    },
-                                    "city": {
-                                        "type": "string",
-                                        "example": "Surabaya",
-                                        "maxLength": 100
-                                    },
-                                    "address": {
-                                        "type": "string",
-                                        "example": "Jl. Basuki Rahmat No. 10"
-                                    },
-                                    "latitude": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": -7.2575
-                                    },
-                                    "longitude": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 112.7521
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "required": true
                 },
                 "responses": {
-                    "200": {
-                        "description": "Business updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Business updated successfully"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
+                    "302": {
+                        "description": "Redirect after update"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             },
             "delete": {
                 "tags": [
-                    "Business"
+                    "Farms"
                 ],
-                "summary": "Delete a specific business",
-                "operationId": "5c158f0548ed580056aa06d26fd8a0a1",
+                "summary": "Delete farm",
+                "operationId": "8ed57290172e0060f953e9288dacf5dd",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "farm",
                         "in": "path",
-                        "description": "Business ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Business deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Business deleted successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
+                    "302": {
+                        "description": "Redirect after delete"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             }
         },
-        "/api/businesses/{business}/daily-sales": {
+        "/barns": {
             "get": {
                 "tags": [
-                    "Daily Sale"
+                    "Barns"
                 ],
-                "summary": "Get daily sales history for a specific business",
-                "operationId": "07d6158dec3c1c920a13bd4af8bce172",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "description": "Start Date (YYYY-MM-DD)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "description": "End Date (YYYY-MM-DD)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    }
-                ],
+                "summary": "List barns",
+                "operationId": "d4c14bdecb923b03ffc67ed99871963b",
                 "responses": {
                     "200": {
-                        "description": "List of daily sales",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
+                        "description": "Barns page"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             },
             "post": {
                 "tags": [
-                    "Daily Sale"
+                    "Barns"
                 ],
-                "summary": "Input daily sales data",
-                "operationId": "a978a80b350e81455e95fd832e1726a4",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
+                "summary": "Create barn",
+                "operationId": "8bf3f9db1f955cb68457df5481789f7f",
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "sale_date",
-                                    "items"
-                                ],
-                                "properties": {
-                                    "sale_date": {
-                                        "type": "string",
-                                        "format": "date",
-                                        "example": "2026-05-09"
-                                    },
-                                    "notes": {
-                                        "type": "string",
-                                        "example": "Hujan deras, toko sepi"
-                                    },
-                                    "items": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "menu_item_id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "qty_sold": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 50
-                                                },
-                                                "qty_produced": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 60
-                                                },
-                                                "qty_wasted": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 10
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "required": true
                 },
                 "responses": {
-                    "201": {
-                        "description": "Daily sales recorded successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
+                    "302": {
+                        "description": "Redirect after create"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             }
         },
-        "/api/businesses/{business}/daily-sales/{sale}": {
-            "get": {
-                "tags": [
-                    "Daily Sale"
-                ],
-                "summary": "Get specific daily sales detail",
-                "operationId": "a94f21af7e6a8d9fedd187fd5b1bc1a1",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "sale",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Daily sales detail"
-                    },
-                    "404": {
-                        "description": "Not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
+        "/barns/{barn}": {
             "put": {
                 "tags": [
-                    "Daily Sale"
+                    "Barns"
                 ],
-                "summary": "Update specific daily sales data",
-                "operationId": "09e51b97469f3d786d7c9bfb8dc7d5f2",
+                "summary": "Update barn",
+                "operationId": "386b5073ff829bd9d82394a165851921",
                 "parameters": [
                     {
-                        "name": "business",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "sale",
+                        "name": "barn",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -932,759 +302,590 @@
                     }
                 ],
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "notes": {
-                                        "type": "string",
-                                        "example": "Updated notes"
-                                    },
-                                    "items": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "menu_item_id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "qty_sold": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 45
-                                                },
-                                                "qty_produced": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 50
-                                                },
-                                                "qty_wasted": {
-                                                    "type": "number",
-                                                    "format": "float",
-                                                    "example": 5
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "required": true
                 },
                 "responses": {
-                    "200": {
-                        "description": "Daily sales updated successfully"
-                    },
-                    "404": {
-                        "description": "Not found"
+                    "302": {
+                        "description": "Redirect after update"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/businesses/{business}/daily-sales/import": {
-            "post": {
-                "tags": [
-                    "Daily Sale"
-                ],
-                "summary": "Import historical daily sales from Excel or CSV file",
-                "operationId": "83febbf7027b6a83092220583aa9200e",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "file"
-                                ],
-                                "properties": {
-                                    "file": {
-                                        "description": "Excel or CSV file",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Sales data imported successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/businesses/{business}/menus": {
-            "get": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get all menus for a specific business",
-                "operationId": "b1f42bcf2599d6ec0f957d5ced0c29b6",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "category",
-                        "in": "query",
-                        "description": "Filter by category",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "Minuman Dingin"
-                        }
-                    },
-                    {
-                        "name": "is_active",
-                        "in": "query",
-                        "description": "Filter by active status",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "example": true
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List of menu items",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Success"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "business_id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "Es Teh Manis"
-                                                    },
-                                                    "category": {
-                                                        "type": "string",
-                                                        "example": "Minuman Dingin"
-                                                    },
-                                                    "unit": {
-                                                        "type": "string",
-                                                        "example": "cup"
-                                                    },
-                                                    "selling_price": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 5000
-                                                    },
-                                                    "cogs": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 2000
-                                                    },
-                                                    "margin_pct": {
-                                                        "type": "number",
-                                                        "format": "float",
-                                                        "example": 60
-                                                    },
-                                                    "is_seasonal": {
-                                                        "type": "boolean",
-                                                        "example": false
-                                                    },
-                                                    "is_active": {
-                                                        "type": "boolean",
-                                                        "example": true
-                                                    },
-                                                    "notes": {
-                                                        "type": "string",
-                                                        "example": "Manis banget"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Create a new menu item",
-                "operationId": "f2b2053637e3200e833dcaa646bc41da",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "selling_price"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Es Teh Manis",
-                                        "maxLength": 200
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "Minuman Dingin",
-                                        "maxLength": 100
-                                    },
-                                    "unit": {
-                                        "type": "string",
-                                        "example": "cup",
-                                        "maxLength": 50
-                                    },
-                                    "selling_price": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 5000
-                                    },
-                                    "cogs": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 2000
-                                    },
-                                    "is_seasonal": {
-                                        "type": "boolean",
-                                        "example": false
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "notes": {
-                                        "type": "string",
-                                        "example": "Teh pilihan"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Menu item created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu item created successfully"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/businesses/{business}/menus/{menu}": {
-            "get": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get a specific menu item",
-                "operationId": "5478965e4ad86d42fbe0323c74a37884",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "menu",
-                        "in": "path",
-                        "description": "Menu Item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Menu detail",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Menu or Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Update a menu item",
-                "operationId": "058628f7cdc5c0387d787edde3233576",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "menu",
-                        "in": "path",
-                        "description": "Menu Item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Es Teh Manis Jumbo",
-                                        "maxLength": 200
-                                    },
-                                    "category": {
-                                        "type": "string",
-                                        "example": "Minuman Dingin",
-                                        "maxLength": 100
-                                    },
-                                    "unit": {
-                                        "type": "string",
-                                        "example": "cup besar",
-                                        "maxLength": 50
-                                    },
-                                    "selling_price": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 8000
-                                    },
-                                    "cogs": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 3500
-                                    },
-                                    "is_seasonal": {
-                                        "type": "boolean",
-                                        "example": false
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "notes": {
-                                        "type": "string",
-                                        "example": "Teh pilihan"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Menu item updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu item updated successfully"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Menu or Business not found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             },
             "delete": {
                 "tags": [
-                    "Menu"
+                    "Barns"
                 ],
-                "summary": "Delete a menu item",
-                "operationId": "2a1b94f334e093a5087c08eb3cb9d7e1",
+                "summary": "Delete barn",
+                "operationId": "214e8dc8f1b7c055ec899363e8afb771",
                 "parameters": [
                     {
-                        "name": "business",
+                        "name": "barn",
                         "in": "path",
-                        "description": "Business ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "menu",
-                        "in": "path",
-                        "description": "Menu Item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Menu item deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu item deleted successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Menu or Business not found"
+                    "302": {
+                        "description": "Redirect after delete"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
             }
         },
-        "/api/businesses/{business}/menus/{menu}/toggle-status": {
-            "patch": {
+        "/livestock": {
+            "get": {
                 "tags": [
-                    "Menu"
+                    "Livestock"
                 ],
-                "summary": "Toggle active status of a menu item",
-                "operationId": "f4ce1f203887f98277840d97ebdfef02",
-                "parameters": [
-                    {
-                        "name": "business",
-                        "in": "path",
-                        "description": "Business ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "menu",
-                        "in": "path",
-                        "description": "Menu Item ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
+                "summary": "List livestock",
+                "operationId": "612a4e019aecc3986a122d6ab1572bfd",
                 "responses": {
                     "200": {
-                        "description": "Menu status toggled successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menu status updated"
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Menu or Business not found"
+                        "description": "Livestock page"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
                     }
                 ]
-            }
-        },
-        "/api/businesses/{business}/menus/import": {
+            },
             "post": {
                 "tags": [
-                    "Menu"
+                    "Livestock"
                 ],
-                "summary": "Import menus from Excel or CSV file",
-                "operationId": "4220e86a96a427b261f618dbb66b8e5e",
+                "summary": "Create livestock",
+                "operationId": "61fbeae9b4a2fdf4caa07041077f3024",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after create"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/livestock/{livestock}": {
+            "put": {
+                "tags": [
+                    "Livestock"
+                ],
+                "summary": "Update livestock",
+                "operationId": "113ec1e4fee744a2c2ecfb6bb2cf962f",
                 "parameters": [
                     {
-                        "name": "business",
+                        "name": "livestock",
                         "in": "path",
-                        "description": "Business ID",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "required": [
-                                    "file"
-                                ],
-                                "properties": {
-                                    "file": {
-                                        "description": "Excel or CSV file",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
+                    "required": true
                 },
                 "responses": {
-                    "200": {
-                        "description": "Menus imported successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": "success"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Menus imported successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "404": {
-                        "description": "Business not found"
+                    "302": {
+                        "description": "Redirect after update"
                     }
                 },
                 "security": [
                     {
-                        "bearerAuth": []
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Livestock"
+                ],
+                "summary": "Delete livestock",
+                "operationId": "56a08a4d2c7e967ac9eb65daa06ade6f",
+                "parameters": [
+                    {
+                        "name": "livestock",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect after delete"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/health-records": {
+            "get": {
+                "tags": [
+                    "Health Records"
+                ],
+                "summary": "List health records",
+                "operationId": "0e355b3494edcc91e255167d46ed49e4",
+                "responses": {
+                    "200": {
+                        "description": "Health records page"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Health Records"
+                ],
+                "summary": "Create health record",
+                "operationId": "4ede2abaa22b9c2db46e8b9b527ee309",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after create"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/health-records/{healthRecord}": {
+            "put": {
+                "tags": [
+                    "Health Records"
+                ],
+                "summary": "Update health record",
+                "operationId": "2f857a4f24a0b5cfe5b281fe8b0e7bcc",
+                "parameters": [
+                    {
+                        "name": "healthRecord",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after update"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Health Records"
+                ],
+                "summary": "Delete health record",
+                "operationId": "f0a48af88423e7b283f72a012de061af",
+                "parameters": [
+                    {
+                        "name": "healthRecord",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect after delete"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/vaccinations": {
+            "get": {
+                "tags": [
+                    "Vaccinations"
+                ],
+                "summary": "List vaccination schedules",
+                "operationId": "9ffed3733824151e3124a67d2ecec552",
+                "responses": {
+                    "200": {
+                        "description": "Vaccination page"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vaccinations"
+                ],
+                "summary": "Create vaccination schedule",
+                "operationId": "6134babbf2297b9acb18d74c256edccd",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after create"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/vaccinations/{vaccination}": {
+            "put": {
+                "tags": [
+                    "Vaccinations"
+                ],
+                "summary": "Update vaccination schedule",
+                "operationId": "afe07fc3415c5e3101bd5d66335dc441",
+                "parameters": [
+                    {
+                        "name": "vaccination",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after update"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Vaccinations"
+                ],
+                "summary": "Delete vaccination schedule",
+                "operationId": "49af37202d194a36eb126581b081fbff",
+                "parameters": [
+                    {
+                        "name": "vaccination",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect after delete"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/feed-formulas": {
+            "get": {
+                "tags": [
+                    "Feed Formulas"
+                ],
+                "summary": "List feed formulas",
+                "operationId": "6de8b6ff2f3d02e9a80a573556ee28c6",
+                "responses": {
+                    "200": {
+                        "description": "Feed formula page"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Feed Formulas"
+                ],
+                "summary": "Create feed formula",
+                "operationId": "9e0d9124b2ef78c46d70a32fa581d946",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after create"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/feed-formulas/{feedFormula}": {
+            "put": {
+                "tags": [
+                    "Feed Formulas"
+                ],
+                "summary": "Update feed formula",
+                "operationId": "d544cbfea21ea22c16189f6905b5905e",
+                "parameters": [
+                    {
+                        "name": "feedFormula",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after update"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Feed Formulas"
+                ],
+                "summary": "Delete feed formula",
+                "operationId": "d1fd32bc0e139b995f617b4fc52119c6",
+                "parameters": [
+                    {
+                        "name": "feedFormula",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect after delete"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/disease-detections": {
+            "get": {
+                "tags": [
+                    "Disease Detections"
+                ],
+                "summary": "List disease detections",
+                "operationId": "377ec197860d790c8479a771ae5e06de",
+                "responses": {
+                    "200": {
+                        "description": "Disease detection page"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Disease Detections"
+                ],
+                "summary": "Create disease detection",
+                "operationId": "73903bb30567ad195b947cc648dc45a2",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after create"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/disease-detections/{diseaseDetection}": {
+            "put": {
+                "tags": [
+                    "Disease Detections"
+                ],
+                "summary": "Update disease detection",
+                "operationId": "f6d3eaa2f28c475b93f264150012b1ea",
+                "parameters": [
+                    {
+                        "name": "diseaseDetection",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "302": {
+                        "description": "Redirect after update"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Disease Detections"
+                ],
+                "summary": "Delete disease detection",
+                "operationId": "0f3f75dc7543c817b7eea9ea733126bb",
+                "parameters": [
+                    {
+                        "name": "diseaseDetection",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect after delete"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/price-radar": {
+            "get": {
+                "tags": [
+                    "Additional"
+                ],
+                "summary": "Price radar page",
+                "operationId": "4d02975dd721e5edbb8651ad5fe6d974",
+                "responses": {
+                    "200": {
+                        "description": "Price radar view"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/weather": {
+            "get": {
+                "tags": [
+                    "Additional"
+                ],
+                "summary": "Weather page",
+                "operationId": "3dfa3960038a88068efe60cbe3a93d1a",
+                "responses": {
+                    "200": {
+                        "description": "Weather view"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
+                    }
+                ]
+            }
+        },
+        "/assistant": {
+            "get": {
+                "tags": [
+                    "Additional"
+                ],
+                "summary": "Assistant page",
+                "operationId": "fe65e5d07e6c659de0d9bca25977f0ff",
+                "responses": {
+                    "200": {
+                        "description": "Assistant view"
+                    }
+                },
+                "security": [
+                    {
+                        "sessionAuth": []
                     }
                 ]
             }
@@ -1692,29 +893,47 @@
     },
     "components": {
         "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+            "sessionAuth": {
+                "type": "apiKey",
+                "description": "Laravel session cookie auth",
+                "name": "laravel_session",
+                "in": "cookie"
             }
         }
     },
     "tags": [
         {
-            "name": "Auth",
-            "description": "Auth"
+            "name": "Public"
         },
         {
-            "name": "Business",
-            "description": "Business"
+            "name": "Auth"
         },
         {
-            "name": "Daily Sale",
-            "description": "Daily Sale"
+            "name": "Dashboard"
         },
         {
-            "name": "Menu",
-            "description": "Menu"
+            "name": "Farms"
+        },
+        {
+            "name": "Barns"
+        },
+        {
+            "name": "Livestock"
+        },
+        {
+            "name": "Health Records"
+        },
+        {
+            "name": "Vaccinations"
+        },
+        {
+            "name": "Disease Detections"
+        },
+        {
+            "name": "Feed Formulas"
+        },
+        {
+            "name": "Additional"
         }
     ]
 }
