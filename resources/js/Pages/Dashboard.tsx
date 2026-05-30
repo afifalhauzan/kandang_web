@@ -1,85 +1,77 @@
-import { Head, Link } from "@inertiajs/react";
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import AppLayout from "../layouts/AppLayout";
+import MvpLayout from "@/Pages/_MvpLayout";
 
-const trendData = [
-    { day: "Mon", sales: 420000 },
-    { day: "Tue", sales: 510000 },
-    { day: "Wed", sales: 470000 },
-    { day: "Thu", sales: 620000 },
-    { day: "Fri", sales: 700000 },
-    { day: "Sat", sales: 760000 },
-    { day: "Sun", sales: 680000 },
-];
+type Vaccination = {
+    id: number;
+    title: string;
+    scheduled_date: string;
+    status: string;
+    livestock?: {
+        animal_type: string;
+    };
+};
 
-export default function Dashboard() {
+type Detection = {
+    id: number;
+    prediction: string | null;
+    confidence: string | null;
+    created_at: string;
+};
+
+type DashboardProps = {
+    stats: {
+        barn_count: number;
+        livestock_count: number;
+    };
+    upcomingVaccinations: Vaccination[];
+    latestDetections: Detection[];
+};
+
+export default function Dashboard({ stats, upcomingVaccinations, latestDetections }: DashboardProps) {
     return (
-        <AppLayout className="bg-slate-50">
-            <Head title="Ternak Dashboard" />
-            <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="font-fredoka text-3xl text-slate-900">Mock Dashboard</h1>
-                        <p className="text-sm text-slate-600">Starter metrics with static data.</p>
+        <MvpLayout title="Dashboard">
+            <div className="space-y-4">
+                <h2 className="text-2xl font-semibold">Dashboard MVP</h2>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="rounded border bg-white p-4">
+                        Jumlah Kandang: <strong>{stats.barn_count}</strong>
                     </div>
-                    <Button asChild variant="outline">
-                        <Link href="/">Back to Landing</Link>
-                    </Button>
+                    <div className="rounded border bg-white p-4">
+                        Jumlah Ternak: <strong>{stats.livestock_count}</strong>
+                    </div>
+                    <div className="rounded border bg-white p-4">
+                        Vaksin Mendatang: <strong>{upcomingVaccinations.length}</strong>
+                    </div>
+                    <div className="rounded border bg-white p-4">
+                        Deteksi Terbaru: <strong>{latestDetections.length}</strong>
+                    </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-3">
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Revenue (weekly)</CardDescription>
-                            <CardTitle>Rp 4.16M</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Badge>+12.4%</Badge>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Orders</CardDescription>
-                            <CardTitle>128</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Badge variant="secondary">Stable</Badge>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardDescription>Active Products</CardDescription>
-                            <CardTitle>42</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Badge variant="outline">Catalog Ready</Badge>
-                        </CardContent>
-                    </Card>
-                </div>
+                <div className="grid gap-4 lg:grid-cols-2">
+                    <section className="rounded border bg-white p-4">
+                        <h3 className="mb-3 text-lg font-medium">Jadwal Vaksin Mendatang</h3>
+                        <ul className="space-y-2 text-sm">
+                            {upcomingVaccinations.map((item) => (
+                                <li key={item.id} className="rounded bg-slate-50 p-2">
+                                    {item.scheduled_date} - {item.title} ({item.livestock?.animal_type ?? "N/A"}) [{item.status}]
+                                </li>
+                            ))}
+                            {upcomingVaccinations.length === 0 && <li className="text-slate-500">Belum ada data.</li>}
+                        </ul>
+                    </section>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Sales Trend</CardTitle>
-                        <CardDescription>Recharts demo component included in scaffold</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="h-72 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={trendData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="day" />
-                                    <YAxis />
-                                    <Tooltip formatter={(value: number) => [`Rp ${value.toLocaleString("id-ID")}`, "Sales"]} />
-                                    <Line type="monotone" dataKey="sales" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </CardContent>
-                </Card>
-            </main>
-        </AppLayout>
+                    <section className="rounded border bg-white p-4">
+                        <h3 className="mb-3 text-lg font-medium">Deteksi Penyakit Terbaru</h3>
+                        <ul className="space-y-2 text-sm">
+                            {latestDetections.map((item) => (
+                                <li key={item.id} className="rounded bg-slate-50 p-2">
+                                    {item.created_at} - {item.prediction ?? "Unknown"} (conf: {item.confidence ?? "-"})
+                                </li>
+                            ))}
+                            {latestDetections.length === 0 && <li className="text-slate-500">Belum ada data.</li>}
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </MvpLayout>
     );
 }

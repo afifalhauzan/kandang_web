@@ -2,64 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barn;
 use App\Models\Livestock;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class LivestockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request): Response
     {
-        //
+        $userId = $request->user()->id;
+
+        return Inertia::render('Livestock/Index', [
+            'livestock' => Livestock::query()
+                ->with('barn:id,name')
+                ->whereHas('barn.farm', fn ($query) => $query->where('user_id', $userId))
+                ->latest()
+                ->get(),
+            'barns' => Barn::query()
+                ->whereHas('farm', fn ($query) => $query->where('user_id', $userId))
+                ->orderBy('name')
+                ->get(['id', 'name']),
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $userId = $request->user()->id;
+
+        $validated = $request->validate([
+            'barn_id' => [
+                'required',
+                'integer',
+                Rule::exists('barns', 'id')->where(function ($query) use ($userId) {
+                    $query->whereIn('farm_id', function ($farmQuery) use ($userId) {
+                        $farmQuery->select('id')->from('farms')->where('user_id', $userId);
+                    });
+                }),
+            ],
+            'animal_type' => ['required', 'string', 'max:255'],
+            'breed' => ['nullable', 'string', 'max:255'],
+            'gender' => ['nullable', 'string', 'max:50'],
+            'birth_date' => ['nullable', 'date'],
+            'quantity' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'string', 'max:50'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        Livestock::create($validated);
+
+        return to_route('livestock.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Livestock $livestock)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Livestock $livestock)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Livestock $livestock)
     {
-        //
+        abort_unless($livestock->barn->farm->user_id === $request->user()->id, 403);
+
+        $userId = $request->user()->id;
+
+        $validated = $request->validate([
+            'barn_id' => [
+                'required',
+                'integer',
+                Rule::exists('barns', 'id')->where(function ($query) use ($userId) {
+                    $query->whereIn('farm_id', function ($farmQuery) use ($userId) {
+                        $farmQuery->select('id')->from('farms')->where('user_id', $userId);
+                    });
+                }),
+            ],
+            'animal_type' => ['required', 'string', 'max:255'],
+            'breed' => ['nullable', 'string', 'max:255'],
+            'gender' => ['nullable', 'string', 'max:50'],
+            'birth_date' => ['nullable', 'date'],
+            'quantity' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'string', 'max:50'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $livestock->update($validated);
+
+        return to_route('livestock.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Livestock $livestock)
+    public function destroy(Request $request, Livestock $livestock)
     {
-        //
+        abort_unless($livestock->barn->farm->user_id === $request->user()->id, 403);
+
+        $livestock->delete();
+
+        return to_route('livestock.index');
     }
 }

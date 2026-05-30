@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,17 +10,12 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
-        'phone',
         'email',
         'password',
-        'is_active',
-        'role',
-        'business_id',
     ];
 
     protected $hidden = [
@@ -30,32 +23,31 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string|bool>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_active' => 'boolean',
         ];
     }
 
-    public function ownedBusinesses(): HasMany
+    public function farms(): HasMany
     {
-        return $this->hasMany(Business::class, 'user_id');
+        return $this->hasMany(Farm::class);
     }
 
-    public function business(): BelongsTo
+    public function diseaseDetections(): HasMany
     {
-        return $this->belongsTo(Business::class, 'business_id');
+        return $this->hasMany(DiseaseDetection::class);
     }
 
-    public function orders(): HasMany
+    public function feedFormulas(): HasMany
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(FeedFormula::class);
+    }
+
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class);
     }
 }

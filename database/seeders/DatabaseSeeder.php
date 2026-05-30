@@ -2,81 +2,173 @@
 
 namespace Database\Seeders;
 
-use App\Models\Business;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
+use App\Models\Barn;
+use App\Models\ChatMessage;
+use App\Models\ChatSession;
+use App\Models\DiseaseDetection;
+use App\Models\Farm;
+use App\Models\FeedFormula;
+use App\Models\FeedIngredient;
+use App\Models\HealthRecord;
+use App\Models\Livestock;
+use App\Models\PriceRecord;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\VaccinationSchedule;
+use App\Models\WeatherLog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        $owner = User::query()->create([
+        $user = User::query()->create([
             'name' => 'Ternak Owner',
-            'phone' => '081234567890',
             'email' => 'owner@ternak.local',
             'password' => Hash::make('password'),
-            'role' => 'owner',
-            'is_active' => true,
         ]);
 
-        $business = Business::query()->create([
-            'user_id' => $owner->id,
-            'name' => 'Ternak Mart',
-            'category' => 'Retail',
-            'city' => 'Malang',
-            'address' => 'Jl. Ternak No. 1',
-            'is_active' => true,
+        $farm = Farm::query()->create([
+            'user_id' => $user->id,
+            'name' => 'Farm Demo',
+            'location' => 'Malang',
+            'description' => 'Data awal untuk MVP scaffolding.',
         ]);
 
-        $owner->update(['business_id' => $business->id]);
-
-        $products = collect([
-            ['name' => 'Premium Feed 20kg', 'sku' => 'FEED-20KG', 'price' => 215000, 'stock' => 35],
-            ['name' => 'Vitamin Booster 1L', 'sku' => 'VIT-1L', 'price' => 78000, 'stock' => 60],
-            ['name' => 'Mineral Block', 'sku' => 'MIN-BLOCK', 'price' => 24000, 'stock' => 120],
-        ])->map(fn (array $product) => Product::query()->create([
-            'business_id' => $business->id,
-            'name' => $product['name'],
-            'sku' => $product['sku'],
-            'price' => $product['price'],
-            'stock' => $product['stock'],
-            'is_active' => true,
-        ]));
-
-        $order = Order::query()->create([
-            'user_id' => $owner->id,
-            'business_id' => $business->id,
-            'order_number' => 'ORD-TERN-0001',
-            'status' => 'paid',
-            'total' => 0,
+        $barn = Barn::query()->create([
+            'farm_id' => $farm->id,
+            'name' => 'Kandang A',
+            'type' => 'Sapi',
+            'capacity' => 50,
+            'notes' => 'Kandang utama.',
         ]);
 
-        $total = 0;
-        foreach ($products->take(2) as $index => $product) {
-            $quantity = $index + 1;
-            $subtotal = $product->price * $quantity;
+        $livestock = Livestock::query()->create([
+            'barn_id' => $barn->id,
+            'animal_type' => 'Sapi',
+            'breed' => 'Limousin',
+            'gender' => 'Jantan',
+            'birth_date' => now()->subMonths(16)->toDateString(),
+            'quantity' => 12,
+            'status' => 'Active',
+            'notes' => 'Batch awal.',
+        ]);
 
-            OrderItem::query()->create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $product->price,
-                'subtotal' => $subtotal,
-            ]);
+        HealthRecord::query()->create([
+            'livestock_id' => $livestock->id,
+            'record_date' => now()->toDateString(),
+            'condition' => 'Sehat',
+            'treatment' => 'Vitamin rutin',
+            'notes' => 'Kontrol mingguan.',
+        ]);
 
-            $total += $subtotal;
-        }
+        VaccinationSchedule::query()->create([
+            'livestock_id' => $livestock->id,
+            'title' => 'Vaksin PMK',
+            'scheduled_date' => now()->addDays(7)->toDateString(),
+            'status' => 'Pending',
+            'notes' => 'Sesuai jadwal dinas peternakan.',
+        ]);
 
-        $order->update(['total' => $total]);
+        DiseaseDetection::query()->create([
+            'user_id' => $user->id,
+            'image_path' => 'uploads/sample-cow-1.jpg',
+            'prediction' => 'Healthy',
+            'confidence' => 91.25,
+            'recommendation' => 'Lanjutkan monitoring rutin.',
+        ]);
+
+        FeedIngredient::query()->insert([
+            [
+                'name' => 'Jagung',
+                'protein' => 8.5,
+                'energy' => 3300,
+                'price_per_kg' => 6500,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Dedak',
+                'protein' => 12.0,
+                'energy' => 2800,
+                'price_per_kg' => 4800,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Bungkil Kedelai',
+                'protein' => 44.0,
+                'energy' => 3100,
+                'price_per_kg' => 9800,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        FeedFormula::query()->create([
+            'user_id' => $user->id,
+            'name' => 'Formula Sapi Grower',
+            'target_protein' => 16.0,
+            'total_cost' => 7250,
+            'result_json' => [
+                ['ingredient' => 'Jagung', 'percentage' => 45],
+                ['ingredient' => 'Dedak', 'percentage' => 30],
+                ['ingredient' => 'Bungkil Kedelai', 'percentage' => 25],
+            ],
+        ]);
+
+        PriceRecord::query()->insert([
+            [
+                'commodity_name' => 'Sapi Potong',
+                'category' => 'Livestock',
+                'price' => 62000000,
+                'record_date' => now()->toDateString(),
+                'source' => 'Pasar Hewan Lokal',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'commodity_name' => 'Pakan Konsentrat',
+                'category' => 'Feed',
+                'price' => 7800,
+                'record_date' => now()->toDateString(),
+                'source' => 'Distributor Pakan',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        WeatherLog::query()->create([
+            'location' => 'Malang',
+            'temperature' => 26.8,
+            'humidity' => 74.2,
+            'condition' => 'Cloudy',
+            'recorded_at' => now(),
+        ]);
+
+        $session = ChatSession::query()->create([
+            'user_id' => $user->id,
+            'title' => 'Konsultasi Harian',
+        ]);
+
+        ChatMessage::query()->insert([
+            [
+                'chat_session_id' => $session->id,
+                'role' => 'user',
+                'content' => 'Apa yang harus dicek dulu pagi ini?',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'chat_session_id' => $session->id,
+                'role' => 'assistant',
+                'content' => 'Cek suhu kandang, konsumsi pakan, dan aktivitas ternak.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }
