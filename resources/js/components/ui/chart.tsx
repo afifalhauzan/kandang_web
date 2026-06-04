@@ -64,7 +64,7 @@ export function ChartTooltipContent({ active, payload, className }: ChartTooltip
     if (!active || !payload?.length) return null;
 
     return (
-        <div className={cn("rounded-lg border bg-background px-3 py-2 shadow-sm", className)}>
+        <div className={cn("rounded-xl border bg-background px-3 py-2 shadow-sm", className)}>
             {payload.map((item) => (
                 <div key={item.dataKey} className="flex items-center justify-between gap-3 text-xs">
                     <span className="text-muted-foreground">{item.name}</span>
